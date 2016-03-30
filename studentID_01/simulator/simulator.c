@@ -153,7 +153,12 @@ int main () {
 
       unsigned opcode;
 
+      int Write_0 = 0 ,Num_overflow = 0 ,Address_overflow = 0 ,Misalign = 0 ,Need_halt = 0;
+      //flags to decide the errors
+
       while(cycle < 500000){
+
+
 
         //get the instruction
         opcode = IMemory[pc];
@@ -276,22 +281,27 @@ int main () {
 
                     rs_sign = reg[rs] >> 31;//get the first bit
                     rt_sign = reg[rt] >> 31;//get the first bit
-                    rd_sign = reg[rd] >> 31;//get the first bit
+
 
                     reg[rd] = reg[rs] + reg[rt];
 
+                    rd_sign = reg[rd] >> 31;//get the first bit
+                    //rd_sign should be after the addition
+
                     //ERROR Write to register $0
                     if(rd == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rd] = 0;
                         //************************************
                     }
 
                     //ERROR Number Overflow
                     if ((rs_sign == rt_sign) && (rs_sign != rd_sign)){
-                        fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
-                        printf("Number Overflow\n");
+                        //fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
+                        //printf("Number Overflow\n");
+                        Num_overflow = 1;
                         //************************************
                     }
 
@@ -304,8 +314,9 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rd == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rd] = 0;
                         //************************************
                     }
@@ -319,22 +330,26 @@ int main () {
 
                     rs_sign = reg[rs] >> 31;//get the first bit
                     rt_sign = (-reg[rt]) >> 31;//get the first bit
-                    rd_sign = reg[rd] >> 31;//get the first bit
 
                     reg[rd] = reg[rs] - reg[rt];
 
+                    rd_sign = reg[rd] >> 31;//get the first bit
+                    //need to get rd sign after subtraction
+
                     //ERROR Write to register $0
                     if(rd == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rd] = 0;
                         //************************************
                     }
 
                     //ERROR Number Overflow
                     if ((rs_sign == rt_sign) && (rs_sign != rd_sign)){
-                        fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
-                        printf("Number Overflow\n");
+                        //fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
+                        //printf("Number Overflow\n");
+                        Num_overflow = 1;
                         //************************************
                     }
 
@@ -347,8 +362,9 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rd == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rd] = 0;
                         //************************************
                     }
@@ -362,8 +378,9 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rd == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rd] = 0;
                         //************************************
                     }
@@ -377,8 +394,9 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rd == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rd] = 0;
                         //************************************
                     }
@@ -392,8 +410,9 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rd == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rd] = 0;
                         //************************************
                     }
@@ -407,8 +426,9 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rd == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rd] = 0;
                         //************************************
                     }
@@ -447,9 +467,16 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rd == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
-                        reg[rd] = 0;
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        if( (shamt == 0) && (rt == 0) ){
+
+                        }
+                        else{
+                            Write_0 = 1;
+                            reg[rd] = 0;
+                        }
+                        //test case 101062201 occur problems
                         //************************************
                     }
 
@@ -462,8 +489,9 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rd == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rd] = 0;
                         //************************************
                     }
@@ -480,8 +508,9 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rd == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rd] = 0;
                         //************************************
                     }
@@ -567,21 +596,25 @@ int main () {
 
                     rs_sign = reg[rs] >> 31;//get the first bit
                     imm_sign = immediate >> 31;//get the first bit
-                    rt_sign = reg[rt] >> 31;//get the first bit
 
                     reg[rt] = reg[rs] + immediate;
 
+                    rt_sign = reg[rt] >> 31;//get the first bit
+                    //rt_sign should be after the addition
+
                     //ERROR Write to register $0
                     if(rt == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rt] = 0;
                         //************************************
                     }
                     //ERROR Number Overflow
                     if ((rs_sign == imm_sign) && (rs_sign != rt_sign)){
-                        fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
-                        printf("Number Overflow\n");
+                        //fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
+                        //printf("Number Overflow\n");
+                        Num_overflow = 1;
                         //****************************
                     }
 
@@ -590,12 +623,13 @@ int main () {
                 }
                 else if(opcode == addiu){
 
-                    reg[rt] = reg[rs] + un_immediate;
+                    reg[rt] = reg[rs] + immediate;
 
                     //ERROR Write to register $0
                     if(rt == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rt] = 0;
                         //************************************
                     }
@@ -616,32 +650,44 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rt == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         //************************************
                     }
 
                     //ERROR Number Overflow
                     if((rs_sign == imm_sign) && (rs_sign != Pos_sign)){
-                        fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
-                        printf("Number Overflow\n");
+                        //fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
+                        //printf("Number Overflow\n");
+                        Num_overflow = 1;
                         //************************************
                     }
 
                     //ERROR Memory Address Overflow
-                    if(Pos + 3 >= 1024){
-                        fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
-                        printf("Address Overflow\n");
-                        break;
+                    if( (Pos > 1024) || (Pos + 3 >= 1024) ){
+                        //fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
+                        //printf("Address Overflow\n");
+                        //break;
+                        Address_overflow = 1;
+                        Need_halt = 1;
+                        //break;
                         //************************************
                     }
 
                     //ERROR Data Misaligned
                     if(Pos % 4){
-                        fprintf(Err_dump, "In cycle %d: Misalignment Error\n", cycle+1);
-                        printf("Misalignment Error\n");
-                        break;
+                        //fprintf(Err_dump, "In cycle %d: Misalignment Error\n", cycle+1);
+                        //printf("Misalignment Error\n");
+                        //break;
+                        Misalign = 1;
+                        Need_halt = 1;
+                        //break;
                         //************************************
+                    }
+
+                    if(Need_halt == 1){
+                        break;
                     }
 
                     bit24_31 = DMemory[Pos];
@@ -680,32 +726,44 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rt == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         //************************************
                     }
 
                     //ERROR Number Overflow
                     if((rs_sign == imm_sign) && (rs_sign != Pos_sign)){
-                        fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
-                        printf("Number Overflow\n");
+                        //fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
+                        //printf("Number Overflow\n");
+                        Num_overflow = 1;
                         //************************************
                     }
 
                     //ERROR Memory Address Overflow
-                    if(Pos + 1 >= 1024){
-                        fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
-                        printf("Address Overflow\n");
-                        break;
+                    if( (Pos > 1024) || (Pos + 1 >= 1024) ){
+                        //fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
+                        //printf("Address Overflow\n");
+                        //break;
+                        Address_overflow = 1;
+                        Need_halt = 1;
+                        //break;
                         //************************************
                     }
 
                     //ERROR Data Misaligned
                     if(Pos % 2){
-                        fprintf(Err_dump, "In cycle %d: Misalignment Error\n", cycle+1);
-                        printf("Misalignment Error\n");
-                        break;
+                        //fprintf(Err_dump, "In cycle %d: Misalignment Error\n", cycle+1);
+                        //printf("Misalignment Error\n");
+                        //break;
+                        Misalign = 1;
+                        Need_halt = 1;
+                        //break;
                         //************************************
+                    }
+
+                    if(Need_halt == 1){
+                        break;
                     }
 
                     bit0_7 = DMemory[Pos];
@@ -740,39 +798,51 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rt == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         //************************************
                     }
 
                     //ERROR Number Overflow
                     if((rs_sign == imm_sign) && (rs_sign != Pos_sign)){
-                        fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
-                        printf("Number Overflow\n");
+                        //fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
+                        //printf("Number Overflow\n");
+                        Num_overflow = 1;
                         //************************************
                     }
 
                     //ERROR Memory Address Overflow
-                    if(Pos + 1 >= 1024){
-                        fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
-                        printf("Address Overflow\n");
-                        break;
+                    if( (Pos > 1024) || (Pos + 1 >= 1024) ){
+                        //fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
+                        //printf("Address Overflow\n");
+                        //break;
+                        Address_overflow = 1;
+                        Need_halt = 1;
+                        //break;
                         //************************************
                     }
 
                     //ERROR Data Misaligned
                     if(Pos % 2){
-                        fprintf(Err_dump, "In cycle %d: Misalignment Error\n", cycle+1);
-                        printf("Misalignment Error\n");
-                        break;
+                        //fprintf(Err_dump, "In cycle %d: Misalignment Error\n", cycle+1);
+                        //printf("Misalignment Error\n");
+                        //break;
+                        Misalign = 1;
+                        Need_halt = 1;
+                        //break;
                         //************************************
+                    }
+
+                    if(Need_halt == 1){
+                        break;
                     }
 
                     bit0_7 = DMemory[Pos];
                     bit8_15 = DMemory[Pos+1];
 
-                    bit8_15 = bit8_15 << 24 >> 16;//2 byte
-                    bit0_7 = bit0_7 << 24 >> 24;//2 byte
+                    bit0_7 = bit0_7 << 24 >> 16;//2 byte
+                    bit8_15 = bit8_15 << 24 >> 24;//2 byte
 
                     reg[rt] = bit0_7 + bit8_15;
 
@@ -797,24 +867,33 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rt == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         //************************************
                     }
 
                     //ERROR Number Overflow
                     if((rs_sign == imm_sign) && (rs_sign != Pos_sign)){
-                        fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
-                        printf("Number Overflow\n");
+                        //fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
+                        //printf("Number Overflow\n");
+                        Num_overflow = 1;
                         //************************************
                     }
 
                     //ERROR Memory Address Overflow
                     if(Pos >= 1024){
-                        fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
-                        printf("Address Overflow\n");
-                        break;
+                        //fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
+                        //printf("Address Overflow\n");
+                        //break;
+                        Address_overflow = 1;
+                        Need_halt = 1;
+                        //break;
                         //************************************
+                    }
+
+                    if(Need_halt == 1){
+                        break;
                     }
 
                     reg[rt] = DMemory[Pos];
@@ -839,24 +918,33 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rt == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         //************************************
                     }
 
                     //ERROR Number Overflow
                     if((rs_sign == imm_sign) && (rs_sign != Pos_sign)){
-                        fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
-                        printf("Number Overflow\n");
+                        //fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
+                        //printf("Number Overflow\n");
+                        Num_overflow = 1;
                         //************************************
                     }
 
                     //ERROR Memory Address Overflow
                     if(Pos >= 1024){
-                        fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
-                        printf("Address Overflow\n");
-                        break;
+                        //fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
+                        //printf("Address Overflow\n");
+                        //break;
+                        Address_overflow = 1;
+                        Need_halt = 1;
+                        //break;
                         //************************************
+                    }
+
+                    if(Need_halt == 1){
+                        break;
                     }
 
                     reg[rt] = DMemory[Pos];
@@ -881,25 +969,35 @@ int main () {
 
                     //ERROR Number Overflow
                     if((rs_sign == imm_sign) && (rs_sign != Pos_sign)){
-                        fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
-                        printf("Number Overflow\n");
+                        //fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
+                        //printf("Number Overflow\n");
+                        Num_overflow = 1;
                         //************************************
                     }
 
                     //ERROR Memory Address Overflow
-                    if(Pos + 3 >= 1024){
-                        fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
-                        printf("Address Overflow\n");
-                        break;
+                    if(  (Pos > 1024) || (Pos + 3 >= 1024) ){
+                        //fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
+                        //printf("Address Overflow\n");
+                        //break;
+                        Address_overflow = 1;
+                        Need_halt = 1;
+                        //break;
                         //************************************
                     }
 
                     //ERROR Data Misaligned
                     if(Pos % 4){
-                        fprintf(Err_dump, "In cycle %d: Misalignment Error\n", cycle+1);
-                        printf("Misalignment Error\n");
-                        break;
+                        //fprintf(Err_dump, "In cycle %d: Misalignment Error\n", cycle+1);
+                        //printf("Misalignment Error\n");
+                        Misalign = 1;
+                        Need_halt = 1;
+                        //break;
                         //************************************
+                    }
+
+                    if(Need_halt == 1){
+                        break;
                     }
 
                     DMemory[Pos] = reg[rt] >> 24;//get the value in rt stored back to DMemory
@@ -921,25 +1019,36 @@ int main () {
 
                     //ERROR Number Overflow
                     if((rs_sign == imm_sign) && (rs_sign != Pos_sign)){
-                        fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
-                        printf("Number Overflow\n");
+                        //fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
+                        //printf("Number Overflow\n");
+                        Num_overflow = 1;
                         //************************************
                     }
 
                     //ERROR Memory Address Overflow
-                    if(Pos + 1 >= 1024){
-                        fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
-                        printf("Address Overflow\n");
-                        break;
+                    if( (Pos > 1024) || (Pos + 1 >= 1024) ){
+                        //fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
+                        //printf("Address Overflow\n");
+                        //break;
+                        Address_overflow = 1;
+                        Need_halt = 1;
+                        //break;
                         //************************************
                     }
 
                     //ERROR Data Misaligned
                     if(Pos % 2){
-                        fprintf(Err_dump, "In cycle %d: Misalignment Error\n", cycle+1);
-                        printf("Misalignment Error\n");
-                        break;
+                        //fprintf(Err_dump, "In cycle %d: Misalignment Error\n", cycle+1);
+                        //printf("Misalignment Error\n");
+                        //break;
+                        Misalign = 1;
+                        Need_halt = 1;
+                        //break;
                         //************************************
+                    }
+
+                    if(Need_halt == 1){
+                        break;
                     }
 
                     DMemory[Pos] = reg[rt] << 16 >> 24;//store back half word 2 bytes
@@ -959,17 +1068,25 @@ int main () {
 
                     //ERROR Number Overflow
                     if((rs_sign == imm_sign) && (rs_sign != Pos_sign)){
-                        fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
-                        printf("Number Overflow\n");
+                        //fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
+                        //printf("Number Overflow\n");
+                        Num_overflow = 1;
                         //************************************
                     }
 
                     //ERROR Memory Address Overflow
                     if(Pos >= 1024){
-                        fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
-                        printf("Address Overflow\n");
-                        break;
+                        //fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
+                        //printf("Address Overflow\n");
+                        //break;
+                        Address_overflow = 1;
+                        Need_halt = 1;
+                        //break;
                         //************************************
+                    }
+
+                    if(Need_halt == 1){
+                        break;
                     }
 
                     DMemory[Pos]= reg[rt] << 24 >> 24;//store back 1 byte
@@ -983,8 +1100,9 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rt == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rt] = 0;
                         //************************************
                     }
@@ -998,8 +1116,9 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rt == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rt] = 0;
                         //************************************
                     }
@@ -1012,8 +1131,9 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rt == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rt] = 0;
                         //************************************
                     }
@@ -1027,8 +1147,9 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rt == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rt] = 0;
                         //************************************
                     }
@@ -1052,8 +1173,9 @@ int main () {
 
                     //ERROR Write to register $0
                     if(rt == 0){
-                        fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
-                        printf("Write $0 Error\n");
+                        //fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+                        //printf("Write $0 Error\n");
+                        Write_0 = 1;
                         reg[rt] = 0;
                         //************************************
                     }
@@ -1101,10 +1223,76 @@ int main () {
 
         }
 
+        if(Write_0 == 1){
+
+            fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+            printf("Write $0 Error\n");
+
+            Write_0 = 0;
+        }
+
+        if(Num_overflow == 1){
+
+            fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
+            printf("Number Overflow\n");
+
+            Num_overflow = 0;
+        }
+
+        if(Address_overflow == 1){
+
+            fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
+            printf("Address Overflow\n");
+
+        }
+
+        if(Misalign == 1){
+
+            fprintf(Err_dump, "In cycle %d: Misalignment Error\n", cycle+1);
+            printf("Misalignment Error\n");
+
+        }
+
+        /*if(Need_halt == 1){
+            break;
+        }*/
+        //segmentation fault will occur don't know the reason
+
         cycle++;
       }
+
+
+      if(Write_0 == 1){
+
+            fprintf(Err_dump, "In cycle %d: Write $0 Error\n", cycle+1);
+            printf("Write $0 Error\n");
+
+        }
+
+        if(Num_overflow == 1){
+
+            fprintf(Err_dump, "In cycle %d: Number Overflow\n", cycle+1);
+            printf("Number Overflow\n");
+
+        }
+
+        if(Address_overflow == 1){
+
+            fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
+            printf("Address Overflow\n");
+
+        }
+
+        if(Misalign == 1){
+
+            fprintf(Err_dump, "In cycle %d: Misalignment Error\n", cycle+1);
+            printf("Misalignment Error\n");
+
+        }
+
 
       free (I_img_buffer);
       free (D_img_buffer);
       return 0;
+
 }
