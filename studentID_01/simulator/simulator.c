@@ -1239,20 +1239,6 @@ int main () {
             Num_overflow = 0;
         }
 
-        if(Address_overflow == 1){
-
-            fprintf(Err_dump, "In cycle %d: Address Overflow\n", cycle+1);
-            printf("Address Overflow\n");
-
-        }
-
-        if(Misalign == 1){
-
-            fprintf(Err_dump, "In cycle %d: Misalignment Error\n", cycle+1);
-            printf("Misalignment Error\n");
-
-        }
-
         /*if(Need_halt == 1){
             break;
         }*/
